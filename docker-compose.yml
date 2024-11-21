@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: telegrambot-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: telegramBot
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegrambot-bot
+    environment:
+      BOT_TOKEN: 7454777131:AAHwfu7leMsm2_gEN5PJYNgh-2ko4qn11rg
+      DB_HOST: postgres://postgres:12345@db:5432/telegramBot
+    depends_on:
+      - db
+    ports:
+      - "3000:3000" 
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["node", "main.js"] 
+
+volumes:
+  db-data:
